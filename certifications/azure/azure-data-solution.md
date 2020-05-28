@@ -142,10 +142,50 @@ In this module, students will explore the Azure relational data platform options
 Module objectives
 In this module, you'll learn:
 
-Work with Azure SQL Database
-Work with Azure Synapse Analytics
-Provision and query data in Azure Synapse Analytics
-Import data into Azure Synapse Analytics using PolyBase
+## Azure SQL Database
+Allows to manage our data using the cloud, we can just use Azure virtual machines to host our own Microsoft SQL Server instances (PaaS)
+
+### Planning an Azure SQL Database
+Benefits
+ - Convenience: focus on use the database, not in configuring software
+ - Cost: pricing options enables to balance performance versus cost, without managing HW
+ - Scale: adjust performance and size for a database on the fly
+ - Security: Azure SQL Database comes with a firewall that's automatically configured to restrict connections from the Internet
+
+### Creating an Azure SQL Database
+When you create your first Azure SQL database, you also create an Azure SQL logical server, this is an administrative container for databases.
+
+#### Purchasing models:
+ - DTUs: Database Transaction Unit, a combined measure of compute, storage, and IO resources
+ - vCores: gives greater control over what compute and storage resources you create and pay for
+
+#### Key Concepts
+ - SQL elastic pools
+ - SQL Managed Instances
+ - Collation
+ - Resource limits
+
+## Work with Azure Synapse Analytics
+Limitless analytics service that brings together enterprise data warehousing and Big Data analytics, allowing fast data load
+
+- Workload Management
+- Result-Set cache
+- Materialized Views
+- SSDT CI/CD support
+
+### Provision and query data in Azure Synapse Analytics
+You can:
+ - Create a Synapse Analtycs DW from the Azure portal
+ - Connect an query ASA with SS Management Studio
+ - Query ASA with PowerBI
+ - Load data to ASA with PolyBase
+
+### Import data into Azure Synapse Analytics using PolyBase
+Allows to import data from a variety of formats and sources to populate data warehouse with all necessary data to analyze. First steps:
+
+ - Create an Azure Blob Storage account to host the files
+ - Upload text Data into Azure Blob Store
+ - Obtain the Azure Storage URL and Key
 
 # Module 6: Performing Real-Time Analytics with Stream Analytics
 In this module, students will learn the concepts of event processing and streaming data and how this applies to Events Hubs and Azure Stream Analytics. The students will then set up a stream analytics job to stream data and learn how to query the incoming data to perform analysis of the data. Finally, you will learn how to manage and monitor running jobs.
