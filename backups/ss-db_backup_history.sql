@@ -31,23 +31,25 @@ select bs.database_name as databasename
 -- Excludes system databases
 -- https://stackoverflow.com/a/18014581/2639633
 ------------------------------------------------------------------------------------------------------------
+declare @sql nvarchar(4000)
+declare @sys_databases int
+set @sys_databases = 0 -- 0 if you don't need system databases information
+
 if object_id('tempdb.dbo.#space') is not null
     drop table #space
 
-create table #space (database_id int primary key, data_used_size decimal(18,2), log_used_size decimal(18,2))
-
-declare @sql nvarchar(max)
+create table #space (database_id int primary key, data_used_size decimal(16,2), log_used_size decimal(16,2))
 
 select @sql = stuff((
     select '
        use [' + d.name + ']
     insert into #space (database_id, data_used_size, log_used_size)
     select db_id()
-          ,sum(case when type = 0 then space_used end)
-          ,sum(case when type = 1 then space_used end)
-      from (select s.type, space_used = sum(fileproperty(s.name, ''spaceused'') * 8. / 1024)
+          ,sum(case when [type] = 0 then space_used end)
+          ,sum(case when [type] = 1 then space_used end)
+      from (select s.[type], space_used = sum(fileproperty(s.name, ''spaceused'') * 8. / 1024)
               from sys.database_files s
-             group by s.type
+             group by s.[type]
             ) t;'
       from sys.databases d
      where d.[state] = 0
@@ -69,30 +71,31 @@ select d.database_id
       ,bu.log_last_date
       ,bu.log_size
   from (select database_id
-              ,log_size = cast(sum(case when type = 1 then size end) * 8. / 1024 as decimal(18,2))
-              ,data_size = cast(sum(case when type = 0 then size end) * 8. / 1024 as decimal(18,2))
-              ,total_size = cast(sum(size) * 8. / 1024 as decimal(18,2))
+              ,log_size = cast(sum(case when [type] = 1 then size end) * 8. / 1024 as decimal(16,2))
+              ,data_size = cast(sum(case when [type] = 0 then size end) * 8. / 1024 as decimal(16,2))
+              ,total_size = cast(sum(size) * 8. / 1024 as decimal(16,2))
           from sys.master_files
+         where database_id > case when @sys_databases = 0 then 4 else 0 end
          group by database_id
         ) t
   join sys.databases d on d.database_id = t.database_id
   left join #space s on d.database_id = s.database_id
   left join 
        (select database_name
-              ,full_last_date = max(case when type = 'D' then backup_finish_date end)
-              ,full_size = max(case when type = 'D' then backup_size end)
-              ,log_last_date = max(case when type = 'L' then backup_finish_date end)
-              ,log_size = max(case when type = 'L' then backup_size end)
+              ,full_last_date = max(case when [type] = 'D' then backup_finish_date end)
+              ,full_size = max(case when [type] = 'D' then backup_size end)
+              ,log_last_date = max(case when [type] = 'L' then backup_finish_date end)
+              ,log_size = max(case when [type] = 'L' then backup_size end)
           from (select s.database_name
-                      ,s.type
+                      ,s.[type]
                       ,s.backup_finish_date
                       ,backup_size = cast(case when s.backup_size = s.compressed_backup_size
                                                then s.backup_size
                                                else s.compressed_backup_size
-                                           end / 1048576.0 as decimal(18,2))
-                      ,rownum = row_number() over (partition by s.database_name, s.type order by s.backup_finish_date desc)
+                                           end / 1048576.0 as decimal(16,2)) -- For 2005 versions use only backup_size column
+                      ,rownum = row_number() over (partition by s.database_name, s.[type] order by s.backup_finish_date desc)
                   from msdb.dbo.backupset s
-                 where s.type in ('D', 'L')
+                 where s.[type] in ('D', 'L')
           ) f
           where f.rownum = 1
           group by f.database_name
