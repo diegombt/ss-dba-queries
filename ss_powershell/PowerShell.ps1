@@ -49,7 +49,7 @@ Get-WmiObject Win32_OperatingSystem -ComputerName vmptumarado | Select PSCompute
 # Get failover events
 # https://dba.stackexchange.com/a/144559/206202
 ############################################################################################################
-Get-winEvent -ComputerName vsqlavgpru01 -filterHashTable @{logname ='Microsoft-Windows-FailoverClustering/Operational'; id=1641}| ft -AutoSize -Wrap
+Get-winEvent -ComputerName vsqlavgpru01 -filterHashTable @{logname ='Microsoft-Windows-FailoverClustering/Operational'; id=1641} | Out-GridView -Title 'WS Failover Events'
 
 ############################################################################################################
 # Get Cluster Configuration Threshold and Delay Settings
