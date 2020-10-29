@@ -17,6 +17,7 @@ select bs.database_name as databasename
       ,cast(cast(bs.backup_size / 1000000 as int) as varchar(14)) + ' ' + 'mb' as backupsize
       ,bs.server_name as servername
       ,bs.recovery_model as recoverymodel
+      ,bs.is_copy_only
   from msdb.dbo.backupset as bs
   join msdb.dbo.backupmediafamily as bmf
     on bs.media_set_id = bmf.media_set_id

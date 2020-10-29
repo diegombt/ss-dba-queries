@@ -31,13 +31,13 @@ Get-DiskFree -Credential $cred -cn $servers -Format | ? { $_.Type -like '*fixed*
 # -----------------------------------------------------------------------------------------------------------
 # Obtener numero de procesadores e información sobre la arquitectura de un equipo remoto
 # -----------------------------------------------------------------------------------------------------------
-Get-WmiObject -ComputerName vmptumarado –class Win32_processor | ft systemname,Name,DeviceID,NumberOfCores,NumberOfLogicalProcessors, Addresswidth
+Get-WmiObject -ComputerName vmptumarado -class Win32_processor | ft systemname,Name,DeviceID,NumberOfCores,NumberOfLogicalProcessors, Addresswidth
 
 # -----------------------------------------------------------------------------------------------------------
 # Obtener memoria RAM en GB
 # https://community.spiceworks.com/scripts/show/1020-get-amount-of-memory-on-remote-machine
 # -----------------------------------------------------------------------------------------------------------
-[math]::round((get-wmiobject –class Win32_ComputerSystem -namespace "root\CIMV2" -computername vmptumarado).TotalPhysicalMemory/1024/1024/1024, 0)
+[math]::round((get-wmiobject -class Win32_ComputerSystem -namespace "root\CIMV2" -computername vmptumarado).TotalPhysicalMemory/1024/1024/1024, 0)
 
 # -----------------------------------------------------------------------------------------------------------
 # Obtener información de sistema operativo
@@ -49,10 +49,22 @@ Get-WmiObject Win32_OperatingSystem -ComputerName vmptumarado | Select PSCompute
 # Get failover events
 # https://dba.stackexchange.com/a/144559/206202
 # -----------------------------------------------------------------------------------------------------------
-Get-winEvent -ComputerName vsqlavgpru01 -filterHashTable @{logname ='Microsoft-Windows-FailoverClustering/Operational'; id=1641} | Out-GridView -Title 'WS Failover Events'
+Get-winEvent -ComputerName vcarina -filterHashTable @{logname ='Microsoft-Windows-FailoverClustering/Operational'; id=1641} | Out-GridView -Title 'WS Failover Events'
 
 # -----------------------------------------------------------------------------------------------------------
 # Get Cluster Configuration Threshold and Delay Settings
 # https://www.virtual-dba.com/always-on-changing-cluster-configuration/
 # -----------------------------------------------------------------------------------------------------------
 get-cluster | fl *subnet*
+
+# -----------------------------------------------------------------------------------------------------------
+# Last Good CheckDB
+# -----------------------------------------------------------------------------------------------------------
+$allservers = Get-DbaRegServer -SqlInstance vmpfrancia | Select-Object -Unique -ExpandProperty ServerName
+$allservers | Get-DbaLastGoodCheckDb -SqlCredential compensar\macdmbernalt -ExcludeDatabase "tempdb" | Out-GridView -Title 'Last Good CheckDB'
+
+# -----------------------------------------------------------------------------------------------------------
+# Last Backup
+# -----------------------------------------------------------------------------------------------------------
+$allservers = Get-DbaRegServer -SqlInstance vmpfrancia | Select-Object -Unique -ExpandProperty ServerName
+$allservers | Get-DbaLastBackup | Select-Object * | Out-Gridview
