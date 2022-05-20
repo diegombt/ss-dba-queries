@@ -35,3 +35,21 @@ fetch next from curspid into @user_spid
 close curspid
 deallocate curspid
 go
+
+------------------------------------------------------------------------------------------------------------
+-- Drop all sessions on a database, then change read/write state
+------------------------------------------------------------------------------------------------------------
+DECLARE @DatabaseName nvarchar(50)
+SET @DatabaseName = 'WSS_Content_bienestarf_11500'
+ 
+DECLARE @SQL varchar(max)
+SET @SQL = ''
+ 
+SELECT @SQL = @SQL + 'Kill ' + Convert(varchar, SPId) + ';'
+FROM MASTER..SysProcesses
+WHERE DBId = DB_ID(@DatabaseName) AND SPId <> @@SPId
+
+EXEC(@SQL)
+
+ALTER DATABASE [WSS_Content_bienestarf_11500] SET READ_WRITE WITH NO_WAIT
+GO
