@@ -24,8 +24,9 @@ select bs.database_name as databasename
  where 1=1
    -- and bs.database_name = 'database'
    -- and bs.type in ('D', 'I')
-   -- and backup_start_date between '2020-03-31' and '2020-04-01'
- order by backup_start_date desc, backup_finish_date
+   -- and backup_start_date >= '2021-09-01'
+   and bs.database_name not in ('BDMONITOREO', 'master', 'model', 'msdb', 'tempdb')
+ order by backup_start_date desc, backup_finish_date;
 
 ------------------------------------------------------------------------------------------------------------
 -- Show database size and last backup execution
