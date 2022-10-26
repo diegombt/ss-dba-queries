@@ -1,0 +1,6 @@
+Ctrl+F1	exec sp_PressureDetector
+Ctrl+3	exec sp_WhoIsActive @get_transaction_info = 1, @get_outer_command = 1, @get_plans = 1, @get_locks = 1, @get_memory_info = 1
+Ctrl+4	exec sp_BlitzFirst @ExpertMode =1, @seconds = 10
+Ctrl+5	exec sp_BlitzCache @ExpertMode =1, @Top = 50
+Ctrl+6	exec sp_BlitzIndex @BringThePain = 1, @Mode = 4
+Ctrl+7	exec sp_blitz
