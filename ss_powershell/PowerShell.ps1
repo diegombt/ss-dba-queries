@@ -68,3 +68,29 @@ $allservers | Get-DbaLastGoodCheckDb -SqlCredential compensar\macdmbernalt -Excl
 # -----------------------------------------------------------------------------------------------------------
 $allservers = Get-DbaRegServer -SqlInstance vmpfrancia | Select-Object -Unique -ExpandProperty ServerName
 $allservers | Get-DbaLastBackup | Select-Object * | Out-Gridview
+
+# -----------------------------------------------------------------------------------------------------------
+# Encontrar todas las instancias de un servidor
+# -----------------------------------------------------------------------------------------------------------
+Find-DbaInstance -ComputerName vmprutiber, vmprumayor | out-gridview
+
+# -----------------------------------------------------------------------------------------------------------
+# Conectarse en modo solo lectura
+# -----------------------------------------------------------------------------------------------------------
+$server = Connect-DbaInstance vmprondon -ApplicationIntent ReadOnly
+Get-DbaDbRoleMember -SqlInstance $server | out-gridview
+
+# -----------------------------------------------------------------------------------------------------------
+# Validar campos identity de una BD
+# -----------------------------------------------------------------------------------------------------------
+Test-DbaIdentityUsage -SqlInstance vmprhesbdb -Database tbc_inf_log | out-gridview
+
+# -----------------------------------------------------------------------------------------------------------
+# Validar usuarios de un grupo de dominio
+# -----------------------------------------------------------------------------------------------------------
+Net Group "G-Adm BD" /domain | Out-GridView
+
+# -----------------------------------------------------------------------------------------------------------
+# Muestra las BDs de las instancias que carecen de un respaldo reciente del log de transacciones
+# -----------------------------------------------------------------------------------------------------------
+Get-DbaDatabase $servers | Where-Object -FilterScript { $_.LastLogBackup -le ((get-date).AddHours(-1)) -AND $_.RecoveryModel -ne 'Simple' } | Out-GridView

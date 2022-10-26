@@ -480,3 +480,25 @@ Es una configuración que se puede aplicar a cualquier recurso para bloquear la 
  - Redes virtuales
  - Bases de datos críticas
  - Controladores de dominio
+
+#Exam AZ900
+ - Which Azure service should you use to correlate events from multiple resources into a centralized repository?
+
+   A. Azure Event Hubs
+   B. Azure Analysis Services
+   C. Azure Monitor
+   D. Azure Log Analytics -- Answer?
+
+ - Explanation
+    I think that the key words for this answer are correlate events and resources:
+
+    As I can see, Azure Event Hubs store events from user's applications (events designed for multiple purposes, embeded right into the application/service/...) meanwhile, Azure Monitor collects events in a centralized repository and Log Analytics allows you to edit and run querys for correlating events that are being collected in Azure Monitor.
+
+    What do you think?
+
+
+    https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/event-hubs/event-hubs-about.md
+
+    https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/azure-monitor/overview.md
+
+    https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/azure-monitor/log-query/log-analytics-overview.md

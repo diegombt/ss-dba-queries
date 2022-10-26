@@ -36,7 +36,7 @@ select server_name
       ,edition
       ,case engine_edition
             when 1 then 'Personal or Desktop Engine'
-            when 2 then 'Standard'
+            when 2 then 'Standard or Business Intelligence'
             when 3 then 'Enterprise'
             when 4 then 'Express'
             when 5 then 'SQL Database'
